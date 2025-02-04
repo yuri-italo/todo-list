@@ -1,3 +1,5 @@
+import { parse } from "date-fns";
+
 export default class Todo {
   #title;
   #description;
@@ -52,7 +54,7 @@ export default class Todo {
 
   set dueDate(newDueDate) {
     if (typeof newDueDate === "string" && newDueDate.trim() !== "") {
-      this.#dueDate = newDueDate.trim();
+      this.#dueDate = parse(newDueDate.trim(), "yyyy-MM-dd", new Date());
     } else {
       throw new Error("Due date must be a non-empty string.");
     }
