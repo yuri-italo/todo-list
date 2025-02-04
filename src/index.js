@@ -1,5 +1,6 @@
 import Todo from "./todo.js";
 import Project from "./project.js";
+import App from "./app.js";
 
 const todo = new Todo(
   "Do the dishes",
@@ -18,7 +19,7 @@ const anotherTodo = new Todo(
 );
 
 // add
-const project = new Project();
+const project = new Project("My project");
 project.add(todo);
 console.log(project.todoList);
 project.add(anotherTodo);
@@ -32,3 +33,10 @@ console.log(removed);
 // edit
 project.edit(anotherTodo, 0);
 console.log(project.todoList);
+
+// app logic
+const app = new App();
+console.log(app.projects);
+console.log(app.addProject(project));
+app.removeProject("My PROject");
+console.log(app.projects);
