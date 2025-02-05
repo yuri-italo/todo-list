@@ -10,7 +10,7 @@ export default class Project {
   }
 
   add(todo) {
-    if (Object.getPrototypeOf(todo) !== Todo.prototype) {
+    if (!(todo instanceof Todo)) {
       throw new Error("Invalid Todo");
     }
 
@@ -18,7 +18,7 @@ export default class Project {
   }
 
   edit(todo, todoIndex) {
-    if (Object.getPrototypeOf(todo) !== Todo.prototype) {
+    if (!(todo instanceof Todo)) {
       throw new Error("Invalid Todo");
     }
 

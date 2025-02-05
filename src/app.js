@@ -8,7 +8,7 @@ export default class App {
   }
 
   addProject(project) {
-    if (Object.getPrototypeOf(project) !== Project.prototype) {
+    if (!(project instanceof Project)) {
       throw new Error("Invalid project");
     }
     const projectName = project.name;
