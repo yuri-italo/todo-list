@@ -21,7 +21,7 @@ const anotherTodo = new Todo(
 const yetAnotherTodo = new Todo(
   "Pay bills",
   "Electricity and internet",
-  "2025-02-05",
+  "2025-02-08",
   "High",
   "Do it before midnight"
 );
@@ -58,3 +58,4 @@ console.log(app.projects);
 // get todos
 console.log(app.getAllTodos());
 console.log(app.getTodayTodos());
+console.log(app.getWeekTodos());

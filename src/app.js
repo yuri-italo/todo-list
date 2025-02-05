@@ -52,6 +52,12 @@ export default class App {
       .filter((todo) => isToday(todo.dueDate));
   }
 
+  getWeekTodos() {
+    return this.#projects
+      .flatMap((project) => project.todoList)
+      .filter((todo) => isThisWeek(todo.dueDate));
+  }
+
   #isProjectNameUnique(name) {
     if (typeof name !== "string") {
       throw new Error("Invalid project name");
