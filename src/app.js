@@ -41,27 +41,25 @@ export default class App {
   }
 
   getAllTodos() {
-    return this.#projects
-      .flatMap((project) => project.todoList)
-      .sort((t1, t2) => compareAsc(t1.dueDate, t2.dueDate));
+    return this.#getTodos().sort((t1, t2) =>
+      compareAsc(t1.dueDate, t2.dueDate)
+    );
   }
 
   getTodayTodos() {
-    return this.#projects
-      .flatMap((project) => project.todoList)
-      .filter((todo) => isToday(todo.dueDate));
+    return this.#getTodos().filter((todo) => isToday(todo.dueDate));
   }
 
   getWeekTodos() {
-    return this.#projects
-      .flatMap((project) => project.todoList)
-      .filter((todo) => isThisWeek(todo.dueDate));
+    return this.#getTodos().filter((todo) => isThisWeek(todo.dueDate));
   }
 
   getMonthTodos() {
-    return this.#projects
-      .flatMap((project) => project.todoList)
-      .filter((todo) => isThisMonth(todo.dueDate));
+    return this.#getTodos().filter((todo) => isThisMonth(todo.dueDate));
+  }
+
+  #getTodos() {
+    return this.#projects.flatMap((project) => project.todoList);
   }
 
   #isProjectNameUnique(name) {
