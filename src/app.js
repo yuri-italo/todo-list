@@ -1,4 +1,5 @@
 import Project from "./project.js";
+import { compareAsc } from "date-fns";
 
 export default class App {
   #projects;
@@ -37,6 +38,12 @@ export default class App {
     } else {
       throw new Error("The default project can not be removed");
     }
+  }
+
+  getAllTodos() {
+    return this.#projects
+      .flatMap((project) => project.todoList)
+      .sort((t1, t2) => compareAsc(t1.dueDate, t2.dueDate));
   }
 
   #isProjectNameUnique(name) {

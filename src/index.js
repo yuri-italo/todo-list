@@ -5,7 +5,7 @@ import App from "./app.js";
 const todo = new Todo(
   "Do the dishes",
   "I need to do it now",
-  "2025-08-07",
+  "2025-08-09",
   "High",
   "Nothing to say"
 );
@@ -18,25 +18,43 @@ const anotherTodo = new Todo(
   "Check for discounts"
 );
 
+const yetAnotherTodo = new Todo(
+  "Pay bills",
+  "Electricity and internet",
+  "2025-08-07",
+  "High",
+  "Do it before midnight"
+);
+
+const app = new App();
+
 // add
+const defaultProject = app.projects[0];
 const project = new Project("My project");
 project.add(todo);
 console.log(project.todoList);
 project.add(anotherTodo);
 console.log(project.todoList);
+defaultProject.add(yetAnotherTodo);
+console.log(defaultProject.todoList);
+
 
 // remove
-const removed = project.remove(1);
-console.log(project.todoList);
-console.log(removed);
+// const removed = project.remove(1);
+// console.log(project.todoList);
+// console.log(removed);
 
 // edit
-project.edit(anotherTodo, 0);
-console.log(project.todoList);
+// project.edit(anotherTodo, 0);
+// console.log(project.todoList);
 
-// app logic
-const app = new App();
+// add project
 console.log(app.projects);
 console.log(app.addProject(project));
-app.removeProject("My PROject");
 console.log(app.projects);
+
+// remove project
+// app.removeProject("My PROject");
+
+// get all todos
+console.log(app.getAllTodos());
