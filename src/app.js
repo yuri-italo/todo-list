@@ -1,5 +1,5 @@
 import Project from "./project.js";
-import { compareAsc } from "date-fns";
+import { compareAsc, isToday, isThisWeek } from "date-fns";
 
 export default class App {
   #projects;
@@ -44,6 +44,12 @@ export default class App {
     return this.#projects
       .flatMap((project) => project.todoList)
       .sort((t1, t2) => compareAsc(t1.dueDate, t2.dueDate));
+  }
+
+  getTodayTodos() {
+    return this.#projects
+      .flatMap((project) => project.todoList)
+      .filter((todo) => isToday(todo.dueDate));
   }
 
   #isProjectNameUnique(name) {

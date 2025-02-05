@@ -21,7 +21,7 @@ const anotherTodo = new Todo(
 const yetAnotherTodo = new Todo(
   "Pay bills",
   "Electricity and internet",
-  "2025-08-07",
+  "2025-02-05",
   "High",
   "Do it before midnight"
 );
@@ -37,7 +37,6 @@ project.add(anotherTodo);
 console.log(project.todoList);
 defaultProject.add(yetAnotherTodo);
 console.log(defaultProject.todoList);
-
 
 // remove
 // const removed = project.remove(1);
@@ -56,5 +55,6 @@ console.log(app.projects);
 // remove project
 // app.removeProject("My PROject");
 
-// get all todos
+// get todos
 console.log(app.getAllTodos());
+console.log(app.getTodayTodos());
