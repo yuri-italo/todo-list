@@ -5,7 +5,7 @@ import App from "./app.js";
 const todo = new Todo(
   "Do the dishes",
   "I need to do it now",
-  "2025-08-09",
+  "2025-02-09",
   "High",
   "Nothing to say"
 );
@@ -59,3 +59,4 @@ console.log(app.projects);
 console.log(app.getAllTodos());
 console.log(app.getTodayTodos());
 console.log(app.getWeekTodos());
+console.log(app.getMonthTodos());
