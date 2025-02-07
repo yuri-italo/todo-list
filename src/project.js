@@ -41,6 +41,13 @@ export default class Project {
     return this.#todoList.splice(todoIndex, 1);
   }
 
+  toJSON() {
+    return {
+      name: this.name,
+      todoList: this.todoList.map((todo) => todo.toJSON()),
+    };
+  }
+
   set name(newName) {
     if (typeof newName === "string" && newName.trim() !== "") {
       this.#name = newName.trim();

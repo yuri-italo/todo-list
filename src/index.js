@@ -27,36 +27,7 @@ const yetAnotherTodo = new Todo(
 );
 
 const app = new App();
-
-// add
-const defaultProject = app.projects[0];
-const project = new Project("My project");
+const project = new Project("Project One");
 project.add(todo);
-console.log(project.todoList);
-project.add(anotherTodo);
-console.log(project.todoList);
-defaultProject.add(yetAnotherTodo);
-console.log(defaultProject.todoList);
-
-// remove
-// const removed = project.remove(1);
-// console.log(project.todoList);
-// console.log(removed);
-
-// edit
-// project.edit(anotherTodo, 0);
-// console.log(project.todoList);
-
-// add project
-console.log(app.projects);
-console.log(app.addProject(project));
-console.log(app.projects);
-
-// remove project
-// app.removeProject("My PROject");
-
-// get todos
-console.log(app.getAllTodos());
-console.log(app.getTodayTodos());
-console.log(app.getWeekTodos());
-console.log(app.getMonthTodos());
+app.addProject(project);
+console.log(JSON.stringify(app.projects));
