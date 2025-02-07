@@ -1,4 +1,4 @@
-import { parse } from "date-fns";
+import { format, parse } from "date-fns";
 
 export default class Todo {
   #title;
@@ -28,7 +28,7 @@ export default class Todo {
     return {
       title: this.title,
       description: this.description,
-      dueDate: this.dueDate,
+      dueDate: format(this.#dueDate, "yyyy-MM-dd"),
       priority: this.priority,
       notes: this.notes,
       checklist: this.#checklist,

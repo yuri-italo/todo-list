@@ -29,5 +29,6 @@ const yetAnotherTodo = new Todo(
 const app = new App();
 const project = new Project("Project One");
 project.add(todo);
-app.addProject(project);
-console.log(JSON.stringify(app.projects));
+project.add(anotherTodo);
+// app.addProject(project);
+// app.removeProject("Project One");
