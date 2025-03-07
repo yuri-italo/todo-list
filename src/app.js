@@ -7,7 +7,7 @@ export default class App {
 
   constructor() {
     this.#storage = projectStorage;
-    this.#initializeDefaultProject();
+    this.#initialize();
   }
 
   addProject(project) {
@@ -40,6 +40,10 @@ export default class App {
     this.#storage.saveMany(projects);
   }
 
+  getProjects() {
+    return this.#storage.load();
+  }
+
   getAllTodos() {
     return this.#getTodos().sort((t1, t2) =>
       compareAsc(t1.dueDate, t2.dueDate)
@@ -58,8 +62,9 @@ export default class App {
     return this.#getTodos().filter((todo) => isThisMonth(todo.dueDate));
   }
 
-  #initializeDefaultProject() {
-    if (this.#storage.load().length === 0) {
+  #initialize() {
+    const projects = this.#storage.load();
+    if (projects.length === 0) {
       this.#storage.save(new Project("default"));
     }
   }
