@@ -23,6 +23,24 @@ export default class App {
     return project;
   }
 
+  addProjectTodo(projectIndex, todo) {
+    const projects = this.#storage.load();
+
+    if (projectIndex < 0 || projectIndex >= projects.length) {
+      throw new Error(`Invalid project index: ${projectIndex}`);
+    }
+
+    if (!todo || typeof todo !== "object" || Array.isArray(todo)) {
+      throw new Error("Invalid todo object.");
+    }
+
+    const project = projects[projectIndex];
+    project.add(todo);
+
+    const updatedProjects = projects.with(projectIndex, project);
+    this.#storage.saveMany(updatedProjects);
+  }
+
   removeProject(projectName) {
     if (typeof projectName !== "string") {
       throw new Error("Invalid project name");

@@ -1,4 +1,5 @@
 import App from "./app.js";
+import Todo from "./todo.js";
 import Project from "./project.js";
 
 export default class Ui {
@@ -19,6 +20,7 @@ export default class Ui {
 
     projects.forEach((p, index) => {
       const li = this.#createProjectLi(p, index);
+      li.addEventListener("click", this.#handleProjectClick.bind(this));
       this.#projectList.appendChild(li);
     });
   }
@@ -72,7 +74,7 @@ export default class Ui {
     return card;
   }
 
-  #createForm() {
+  #createProjectForm() {
     const modal = document.createElement("div");
     modal.classList.add("modal");
 
@@ -107,6 +109,98 @@ export default class Ui {
     });
   }
 
+  #createTodoForm(projectIndex) {
+    this.#clearMain();
+
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+
+    modal.innerHTML = `
+      <div class="modal-content">
+        <h2>Add New Todo</h2>
+        <form id="todo-form">
+          <div class="form-group">
+            <label for="todo-title">Title</label>
+            <input type="text" id="todo-title" placeholder="Title" required />
+          </div>
+          <div class="form-group">
+            <label for="todo-description">Description</label>
+            <textarea id="todo-description" placeholder="Description"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="todo-due-date">Due Date</label>
+            <input type="date" id="todo-due-date" required />
+          </div>
+          <div class="form-group">
+            <label for="todo-priority">Priority</label>
+            <select id="todo-priority" required>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="todo-notes">Notes</label>
+            <textarea id="todo-notes" placeholder="Notes"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="todo-checklist">Status</label>
+            <select id="todo-checklist" required>
+              <option value="Not Started">Not Started</option>
+              <option value="In Progress">In Progress</option>
+              <option value="Completed">Completed</option>
+            </select>
+          </div>
+          <div class="modal-buttons">
+            <button type="submit" id="save-todo">Save</button>
+            <button type="button" id="cancel-todo">Cancel</button>
+          </div>
+        </form>
+      </div>
+    `;
+
+    this.#main.appendChild(modal);
+
+    const form = document.getElementById("todo-form");
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const title = document.getElementById("todo-title").value.trim();
+      const description = document
+        .getElementById("todo-description")
+        .value.trim();
+      const dueDate = document.getElementById("todo-due-date").value.trim();
+      const priority = document.getElementById("todo-priority").value;
+      const notes = document.getElementById("todo-notes").value.trim();
+      const checklist = document.getElementById("todo-checklist").value;
+
+      const newTodo = new Todo(
+        title,
+        description,
+        dueDate,
+        priority,
+        notes,
+        checklist
+      );
+      
+      this.#app.addProjectTodo(projectIndex, newTodo);
+      modal.remove();
+      this.#displayProjectTodos(projectIndex);
+    });
+
+    document.getElementById("cancel-todo").addEventListener("click", () => {
+      modal.remove();
+      this.#displayProjectTodos(projectIndex);
+    });
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.remove();
+        this.#displayProjectTodos(projectIndex);
+      }
+    });
+  }
+
   #initialize() {
     document
       .querySelector(".all")
@@ -122,25 +216,57 @@ export default class Ui {
       .addEventListener("click", this.#handleMonthClick.bind(this));
     document
       .querySelector(".add-project")
-      .addEventListener("click", this.#createForm.bind(this));
+      .addEventListener("click", this.#createProjectForm.bind(this));
 
     this.#displayTodos(this.#app.getAllTodos());
     this.#displayProjects(this.#app.getProjects());
   }
 
-  #handleAllClick() {
+  #handleAllClick(event) {
+    event.preventDefault();
+    this.#clearMain();
     this.#displayTodos(this.#app.getAllTodos());
   }
 
-  #handleTodayClick() {
+  #handleTodayClick(event) {
+    event.preventDefault();
+    this.#clearMain();
     this.#displayTodos(this.#app.getTodayTodos());
   }
 
-  #handleWeekClick() {
+  #handleWeekClick(event) {
+    event.preventDefault();
+    this.#clearMain();
     this.#displayTodos(this.#app.getWeekTodos());
   }
 
-  #handleMonthClick() {
+  #handleMonthClick(event) {
+    event.preventDefault();
+    this.#clearMain();
     this.#displayTodos(this.#app.getWeekTodos());
+  }
+
+  #handleProjectClick(event) {
+    this.#clearMain();
+    this.#displayProjectTodos(event.target.dataset.index);
+  }
+
+  #clearMain() {
+    this.#main.innerHTML = "";
+  }
+
+  #displayProjectTodos(projectIndex) {
+    const todos = this.#app.getProjects()[projectIndex].todoList;
+    const btnAddTodo = document.createElement("button");
+
+    btnAddTodo.textContent = "ADD TODO";
+    btnAddTodo.addEventListener("click", () => {
+      this.#createTodoForm(projectIndex);
+    });
+    this.#main.appendChild(btnAddTodo);
+
+    todos.forEach((todo, index) => {
+      this.#main.appendChild(this.#createTodoCard(todo, index));
+    });
   }
 }
