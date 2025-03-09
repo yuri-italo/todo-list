@@ -1,4 +1,5 @@
 import App from "./app.js";
+import Project from "./project.js";
 
 export default class Ui {
   #app;
@@ -14,6 +15,8 @@ export default class Ui {
   }
 
   #displayProjects(projects) {
+    this.#projectList.innerHTML = "";
+
     projects.forEach((p, index) => {
       const li = this.#createProjectLi(p, index);
       this.#projectList.appendChild(li);
@@ -89,7 +92,8 @@ export default class Ui {
     document.getElementById("save-project").addEventListener("click", () => {
       const projectName = document.getElementById("project-name").value.trim();
       if (projectName) {
-        this.#displayProjects(projects);
+        this.#app.addProject(new Project(projectName));
+        this.#displayProjects(this.#app.getProjects());
         modal.remove();
       }
     });
@@ -119,7 +123,7 @@ export default class Ui {
     document
       .querySelector(".add-project")
       .addEventListener("click", this.#createForm.bind(this));
-  
+
     this.#displayTodos(this.#app.getAllTodos());
     this.#displayProjects(this.#app.getProjects());
   }
