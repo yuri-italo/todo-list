@@ -25,6 +25,28 @@ export default class Ui {
     });
   }
 
+  #displayTodos(todos) {
+    todos.forEach((t, index) => {
+      const todo = this.#createTodoCard(t, index);
+      this.#main.appendChild(todo);
+    });
+  }
+
+  #displayProjectTodos(projectIndex) {
+    const todos = this.#app.getProjects()[projectIndex].todoList;
+    const btnAddTodo = document.createElement("button");
+
+    btnAddTodo.textContent = "ADD TODO";
+    btnAddTodo.addEventListener("click", () => {
+      this.#createTodoForm(projectIndex);
+    });
+    this.#main.appendChild(btnAddTodo);
+
+    todos.forEach((todo, index) => {
+      this.#main.appendChild(this.#createTodoCard(todo, index));
+    });
+  }
+
   #createProjectLi(project, index) {
     const li = document.createElement("li");
     const a = document.createElement("a");
@@ -35,11 +57,58 @@ export default class Ui {
     return li;
   }
 
-  #displayTodos(todos) {
-    todos.forEach((t, index) => {
-      const todo = this.#createTodoCard(t, index);
-      this.#main.appendChild(todo);
-    });
+  #initialize() {
+    document
+      .querySelector(".all")
+      .addEventListener("click", this.#handleAllClick.bind(this));
+    document
+      .querySelector(".today")
+      .addEventListener("click", this.#handleTodayClick.bind(this));
+    document
+      .querySelector(".week")
+      .addEventListener("click", this.#handleWeekClick.bind(this));
+    document
+      .querySelector(".month")
+      .addEventListener("click", this.#handleMonthClick.bind(this));
+    document
+      .querySelector(".add-project")
+      .addEventListener("click", this.#createProjectForm.bind(this));
+
+    this.#displayTodos(this.#app.getAllTodos());
+    this.#displayProjects(this.#app.getProjects());
+  }
+
+  #handleAllClick(event) {
+    event.preventDefault();
+    this.#clearMain();
+    this.#displayTodos(this.#app.getAllTodos());
+  }
+
+  #handleTodayClick(event) {
+    event.preventDefault();
+    this.#clearMain();
+    this.#displayTodos(this.#app.getTodayTodos());
+  }
+
+  #handleWeekClick(event) {
+    event.preventDefault();
+    this.#clearMain();
+    this.#displayTodos(this.#app.getWeekTodos());
+  }
+
+  #handleMonthClick(event) {
+    event.preventDefault();
+    this.#clearMain();
+    this.#displayTodos(this.#app.getMonthTodos());
+  }
+
+  #handleProjectClick(event) {
+    this.#clearMain();
+    this.#displayProjectTodos(event.target.dataset.index);
+  }
+
+  #clearMain() {
+    this.#main.innerHTML = "";
   }
 
   #createTodoCard(todo, index) {
@@ -75,6 +144,8 @@ export default class Ui {
   }
 
   #createProjectForm() {
+    this.#clearMain();
+
     const modal = document.createElement("div");
     modal.classList.add("modal");
 
@@ -94,18 +165,28 @@ export default class Ui {
     document.getElementById("save-project").addEventListener("click", () => {
       const projectName = document.getElementById("project-name").value.trim();
       if (projectName) {
-        this.#app.addProject(new Project(projectName));
-        this.#displayProjects(this.#app.getProjects());
+        const project = new Project(projectName);
+        this.#app.addProject(project);
+
         modal.remove();
+        this.#displayProjects(this.#app.getProjects());
+        const projectIndex = this.#app.getProjects().length - 1;
+        this.#displayProjectTodos(projectIndex);
       }
     });
 
     document.getElementById("cancel-project").addEventListener("click", () => {
       modal.remove();
+      this.#displayProjects(this.#app.getProjects());
+      this.#displayTodos(this.#app.getAllTodos());
     });
 
     modal.addEventListener("click", (event) => {
-      if (event.target === modal) modal.remove();
+      if (event.target === modal) {
+        modal.remove();
+        this.#displayProjects(this.#app.getProjects());
+        this.#displayTodos(this.#app.getAllTodos());
+      }
     });
   }
 
@@ -182,7 +263,7 @@ export default class Ui {
         notes,
         checklist
       );
-      
+
       this.#app.addProjectTodo(projectIndex, newTodo);
       modal.remove();
       this.#displayProjectTodos(projectIndex);
@@ -198,75 +279,6 @@ export default class Ui {
         modal.remove();
         this.#displayProjectTodos(projectIndex);
       }
-    });
-  }
-
-  #initialize() {
-    document
-      .querySelector(".all")
-      .addEventListener("click", this.#handleAllClick.bind(this));
-    document
-      .querySelector(".today")
-      .addEventListener("click", this.#handleTodayClick.bind(this));
-    document
-      .querySelector(".week")
-      .addEventListener("click", this.#handleWeekClick.bind(this));
-    document
-      .querySelector(".month")
-      .addEventListener("click", this.#handleMonthClick.bind(this));
-    document
-      .querySelector(".add-project")
-      .addEventListener("click", this.#createProjectForm.bind(this));
-
-    this.#displayTodos(this.#app.getAllTodos());
-    this.#displayProjects(this.#app.getProjects());
-  }
-
-  #handleAllClick(event) {
-    event.preventDefault();
-    this.#clearMain();
-    this.#displayTodos(this.#app.getAllTodos());
-  }
-
-  #handleTodayClick(event) {
-    event.preventDefault();
-    this.#clearMain();
-    this.#displayTodos(this.#app.getTodayTodos());
-  }
-
-  #handleWeekClick(event) {
-    event.preventDefault();
-    this.#clearMain();
-    this.#displayTodos(this.#app.getWeekTodos());
-  }
-
-  #handleMonthClick(event) {
-    event.preventDefault();
-    this.#clearMain();
-    this.#displayTodos(this.#app.getMonthTodos());
-  }
-
-  #handleProjectClick(event) {
-    this.#clearMain();
-    this.#displayProjectTodos(event.target.dataset.index);
-  }
-
-  #clearMain() {
-    this.#main.innerHTML = "";
-  }
-
-  #displayProjectTodos(projectIndex) {
-    const todos = this.#app.getProjects()[projectIndex].todoList;
-    const btnAddTodo = document.createElement("button");
-
-    btnAddTodo.textContent = "ADD TODO";
-    btnAddTodo.addEventListener("click", () => {
-      this.#createTodoForm(projectIndex);
-    });
-    this.#main.appendChild(btnAddTodo);
-
-    todos.forEach((todo, index) => {
-      this.#main.appendChild(this.#createTodoCard(todo, index));
     });
   }
 }
