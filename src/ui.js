@@ -243,7 +243,7 @@ export default class Ui {
   #handleMonthClick(event) {
     event.preventDefault();
     this.#clearMain();
-    this.#displayTodos(this.#app.getWeekTodos());
+    this.#displayTodos(this.#app.getMonthTodos());
   }
 
   #handleProjectClick(event) {
