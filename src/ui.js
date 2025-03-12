@@ -26,6 +26,8 @@ export default class Ui {
   }
 
   #displayTodos(todos) {
+    this.#clearMain();
+
     todos.forEach((t, index) => {
       const todo = this.#createTodoCard(t, index);
       this.#main.appendChild(todo);
@@ -33,14 +35,25 @@ export default class Ui {
   }
 
   #displayProjectTodos(projectIndex) {
-    const todos = this.#app.getProjects()[projectIndex].todoList;
-    const btnAddTodo = document.createElement("button");
+    this.#clearMain();
 
-    btnAddTodo.textContent = "ADD TODO";
+    const project = this.#app.getProjects()[projectIndex];
+    const todos = project.todoList;
+    const btnAddTodo = document.createElement("button");
+    btnAddTodo.textContent = "➕ add todo";
+    const btnRemoveProject = document.createElement("button");
+    btnRemoveProject.textContent = "🗑️ remove project";
+
     btnAddTodo.addEventListener("click", () => {
       this.#createTodoForm(projectIndex);
     });
+
+    btnRemoveProject.addEventListener("click", () => {
+      this.#removeProject(project.name);
+    });
+
     this.#main.appendChild(btnAddTodo);
+    this.#main.appendChild(btnRemoveProject);
 
     todos.forEach((todo, index) => {
       this.#main.appendChild(this.#createTodoCard(todo, index));
@@ -50,11 +63,17 @@ export default class Ui {
   #createProjectLi(project, index) {
     const li = document.createElement("li");
     const a = document.createElement("a");
+
     a.textContent = project.name;
     a.href = "#";
     a.dataset.index = index;
     li.appendChild(a);
+
     return li;
+  }
+
+  #removeProject(projectName) {
+    this.#createDeleteForm(projectName);
   }
 
   #initialize() {
@@ -80,30 +99,25 @@ export default class Ui {
 
   #handleAllClick(event) {
     event.preventDefault();
-    this.#clearMain();
     this.#displayTodos(this.#app.getAllTodos());
   }
 
   #handleTodayClick(event) {
     event.preventDefault();
-    this.#clearMain();
     this.#displayTodos(this.#app.getTodayTodos());
   }
 
   #handleWeekClick(event) {
     event.preventDefault();
-    this.#clearMain();
     this.#displayTodos(this.#app.getWeekTodos());
   }
 
   #handleMonthClick(event) {
     event.preventDefault();
-    this.#clearMain();
     this.#displayTodos(this.#app.getMonthTodos());
   }
 
   #handleProjectClick(event) {
-    this.#clearMain();
     this.#displayProjectTodos(event.target.dataset.index);
   }
 
@@ -279,6 +293,32 @@ export default class Ui {
         modal.remove();
         this.#displayProjectTodos(projectIndex);
       }
+    });
+  }
+
+  #createDeleteForm(projectName) {
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+    modal.innerHTML = `
+      <div class="modal-content">
+        <p>Are you sure you want to delete "${projectName}"?</p>
+        <div class="modal-buttons">
+          <button id="confirm-delete">Yes</button>
+          <button id="cancel-delete">No</button>
+        </div>
+      </div>
+    `;
+    this.#main.appendChild(modal);
+
+    document.getElementById("confirm-delete").addEventListener("click", () => {
+      this.#app.removeProject(projectName);
+      modal.remove();
+      this.#displayProjects(this.#app.getProjects());
+      this.#displayTodos(this.#app.getAllTodos());
+    });
+
+    document.getElementById("cancel-delete").addEventListener("click", () => {
+      modal.remove();
     });
   }
 }
