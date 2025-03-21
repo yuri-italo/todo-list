@@ -28,11 +28,16 @@ export default class Ui {
 
   #displayTodos(todos) {
     this.#clearMain();
-
-    todos.forEach((t, index) => {
-      const todo = this.#createTodoCard(t, index);
-      this.#main.appendChild(todo);
-    });
+    if (todos.length > 0) {
+      todos.forEach((t, index) => {
+        const todo = this.#createTodoCard(t, index);
+        this.#main.appendChild(todo);
+      });
+    } else {
+      const p = document.createElement("p");
+      p.innerText = "No to-dos here...";
+      this.#main.appendChild(p);
+    }
   }
 
   #displayProjectTodos(projectIndex) {
