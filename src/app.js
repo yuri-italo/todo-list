@@ -47,7 +47,7 @@ export default class App {
     }
 
     projectName = projectName.toLowerCase();
-    if (this.#isTheDefaultProject(projectName)) {
+    if (this.isTheDefaultProject(projectName)) {
       throw new Error("The default project cannot be removed");
     }
 
@@ -56,6 +56,14 @@ export default class App {
       .filter((project) => project.name.toLowerCase() !== projectName);
 
     this.#storage.saveMany(projects);
+  }
+
+  isTheDefaultProject(name) {
+    if (typeof name !== "string") {
+      throw new Error("Invalid project name");
+    }
+
+    return name.toLocaleLowerCase() === "default" ? true : false;
   }
 
   getProjects() {
@@ -101,13 +109,5 @@ export default class App {
       .find((project) => project.name.toLowerCase() === name)
       ? false
       : true;
-  }
-
-  #isTheDefaultProject(name) {
-    if (typeof name !== "string") {
-      throw new Error("Invalid project name");
-    }
-
-    return name.toLocaleLowerCase() === "default" ? true : false;
   }
 }

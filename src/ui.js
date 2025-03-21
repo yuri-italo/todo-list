@@ -40,10 +40,14 @@ export default class Ui {
 
     const project = this.#app.getProjects()[projectIndex];
     const todos = project.todoList;
+    
     const btnAddTodo = document.createElement("button");
     btnAddTodo.textContent = "➕ add todo";
+    
     const btnRemoveProject = document.createElement("button");
-    btnRemoveProject.textContent = "🗑️ remove project";
+    if (!this.#app.isTheDefaultProject(project.name)) {
+      btnRemoveProject.textContent = "🗑️ remove project";
+    }
 
     btnAddTodo.addEventListener("click", () => {
       this.#createTodoForm(projectIndex);
