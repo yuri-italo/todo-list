@@ -45,10 +45,10 @@ export default class Ui {
 
     const project = this.#app.getProjects()[projectIndex];
     const todos = project.todoList;
-    
+
     const btnAddTodo = document.createElement("button");
     btnAddTodo.textContent = "➕ add todo";
-    
+
     const btnRemoveProject = document.createElement("button");
     if (!this.#app.isTheDefaultProject(project.name)) {
       btnRemoveProject.textContent = "🗑️ remove project";
@@ -179,6 +179,7 @@ export default class Ui {
       <div class="modal-content">
         <h2>Add New Project</h2>
         <input type="text" id="project-name" placeholder="Project Name" />
+        <div id="project-error" class="error-message"></div>
         <div class="modal-buttons">
           <button id="save-project">Save</button>
           <button id="cancel-project">Cancel</button>
@@ -188,16 +189,32 @@ export default class Ui {
 
     this.#main.appendChild(modal);
 
-    document.getElementById("save-project").addEventListener("click", () => {
-      const projectName = document.getElementById("project-name").value.trim();
-      if (projectName) {
-        const project = new Project(projectName);
-        this.#app.addProject(project);
+    const projectInput = document.getElementById("project-name");
+    const errorDisplay = document.getElementById("project-error");
 
-        modal.remove();
-        this.#displayProjects(this.#app.getProjects());
-        const projectIndex = this.#app.getProjects().length - 1;
-        this.#displayProjectTodos(projectIndex);
+    projectInput.addEventListener("input", () => {
+      errorDisplay.textContent = "";
+    });
+
+    document.getElementById("save-project").addEventListener("click", () => {
+      const projectName = projectInput.value.trim();
+      errorDisplay.textContent = ""; // Clear previous errors
+
+      if (projectName) {
+        try {
+          const project = new Project(projectName);
+          this.#app.addProject(project);
+
+          modal.remove();
+          this.#displayProjects(this.#app.getProjects());
+          const projectIndex = this.#app.getProjects().length - 1;
+          this.#displayProjectTodos(projectIndex);
+        } catch (error) {
+          errorDisplay.textContent = error.message;
+          projectInput.focus();
+        }
+      } else {
+        errorDisplay.textContent = "Project name cannot be empty";
       }
     });
 
