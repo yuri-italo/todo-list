@@ -1,6 +1,7 @@
 import App from "./app.js";
 import Todo from "./todo.js";
 import Project from "./project.js";
+import { format } from "date-fns";
 
 export default class Ui {
   #app;
@@ -138,7 +139,7 @@ export default class Ui {
     description.textContent = todo.description;
 
     const dueDate = document.createElement("p");
-    dueDate.textContent = `Due: ${todo.dueDate}`;
+    dueDate.textContent = `Due: ${format(todo.dueDate, "yyyy-MM-dd")}`;
 
     const priority = document.createElement("p");
     priority.textContent = `Priority: ${todo.priority}`;
