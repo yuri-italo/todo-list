@@ -55,7 +55,7 @@ body {
   background-color: var(--color-950);
   color: white;
   padding: var(--gutter-sm);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .menu {
@@ -87,6 +87,7 @@ body {
   border-radius: 4px;
   transition: all 0.2s;
   margin: var(--gutter-xxs) 0;
+  width: 100%;
 }
 
 .filter-container a:hover,
@@ -153,13 +154,19 @@ button:hover {
   padding: var(--gutter-sm);
   margin-bottom: var(--gutter-xs);
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border-left: 4px solid transparent;
 }
 
-.todo-card-high { border-color: #ef4444; }
-.todo-card-medium { border-color: #eab308; }
-.todo-card-low { border-color: #22c55e; }
+.todo-card-high {
+  border-color: #ef4444;
+}
+.todo-card-medium {
+  border-color: #eab308;
+}
+.todo-card-low {
+  border-color: #22c55e;
+}
 
 .todo-card h2 {
   font-size: var(--size-lg);
@@ -179,7 +186,7 @@ button:hover {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: grid;
   place-items: center;
   backdrop-filter: blur(2px);
@@ -249,12 +256,12 @@ button:hover {
   .container {
     grid-template-columns: 1fr;
   }
-  
+
   .menu {
     border-right: none;
     border-bottom: 1px solid var(--color-200);
   }
-  
+
   .modal-content {
     padding: var(--gutter-sm);
   }
