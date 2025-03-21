@@ -128,6 +128,8 @@ export default class Ui {
   #createTodoCard(todo, index) {
     const card = document.createElement("div");
     card.dataset.index = index;
+    card.classList.add("todo-card");
+    card.classList.add(`todo-card-${todo.priority.toLowerCase()}`);
 
     const title = document.createElement("h2");
     title.textContent = `${todo.title}`;
