@@ -194,6 +194,10 @@ button:hover {
   position: relative;
 }
 
+.modal-content input {
+  width: 100%;
+}
+
 .modal-buttons {
   display: flex;
   gap: var(--gutter-xs);
