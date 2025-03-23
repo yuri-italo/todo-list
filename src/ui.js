@@ -29,8 +29,8 @@ export default class Ui {
   #displayTodos(todos) {
     this.#clearMain();
     if (todos.length > 0) {
-      todos.forEach((t, index) => {
-        const todo = this.#createTodoCard(t, index);
+      todos.forEach((t) => {
+        const todo = this.#createTodoCard(t);
         this.#main.appendChild(todo);
       });
     } else {
@@ -66,7 +66,7 @@ export default class Ui {
     this.#main.appendChild(btnRemoveProject);
 
     todos.forEach((todo, index) => {
-      this.#main.appendChild(this.#createTodoCard(todo, index));
+      this.#main.appendChild(this.#createTodoCard(todo, index, project.name));
     });
   }
 
@@ -83,7 +83,7 @@ export default class Ui {
   }
 
   #removeProject(projectName) {
-    this.#createDeleteForm(projectName);
+    this.#createDeleteProjectForm(projectName);
   }
 
   #initialize() {
@@ -131,13 +131,22 @@ export default class Ui {
     this.#displayProjectTodos(event.target.dataset.index);
   }
 
+  #handleDeleteTodo(event) {
+    const card = event.target.closest("div");
+    const projectName = card.dataset.project;
+    const todoIndex = card.dataset.index;
+
+    this.#createDeleteTodoForm(projectName, todoIndex);
+  }
+
   #clearMain() {
     this.#main.innerHTML = "";
   }
 
-  #createTodoCard(todo, index) {
+  #createTodoCard(todo, index, project) {
     const card = document.createElement("div");
-    card.dataset.index = index;
+    card.dataset.index = index ? index : todo.index;
+    card.dataset.project = project ? project : todo.project;
     card.classList.add("todo-card");
     card.classList.add(`todo-card-${todo.priority.toLowerCase()}`);
 
@@ -159,12 +168,19 @@ export default class Ui {
     const status = document.createElement("p");
     status.textContent = `Status: ${todo.checklist}`;
 
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "🗑️";
+    deleteButton.classList.add("delete-button");
+
+    deleteButton.addEventListener("click", this.#handleDeleteTodo.bind(this));
+
     card.appendChild(title);
     card.appendChild(description);
     card.appendChild(dueDate);
     card.appendChild(priority);
     card.appendChild(notes);
     card.appendChild(status);
+    card.appendChild(deleteButton);
 
     return card;
   }
@@ -198,7 +214,7 @@ export default class Ui {
 
     document.getElementById("save-project").addEventListener("click", () => {
       const projectName = projectInput.value.trim();
-      errorDisplay.textContent = ""; // Clear previous errors
+      errorDisplay.textContent = "";
 
       if (projectName) {
         try {
@@ -325,7 +341,7 @@ export default class Ui {
     });
   }
 
-  #createDeleteForm(projectName) {
+  #createDeleteProjectForm(projectName) {
     const modal = document.createElement("div");
     modal.classList.add("modal");
     modal.innerHTML = `
@@ -341,6 +357,32 @@ export default class Ui {
 
     document.getElementById("confirm-delete").addEventListener("click", () => {
       this.#app.removeProject(projectName);
+      modal.remove();
+      this.#displayProjects(this.#app.getProjects());
+      this.#displayTodos(this.#app.getAllTodos());
+    });
+
+    document.getElementById("cancel-delete").addEventListener("click", () => {
+      modal.remove();
+    });
+  }
+
+  #createDeleteTodoForm(projectName, todoIndex) {
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+    modal.innerHTML = `
+      <div class="modal-content">
+        <p>Are you sure you want to delete it?</p>
+        <div class="modal-buttons">
+          <button id="confirm-delete">Yes</button>
+          <button id="cancel-delete">No</button>
+        </div>
+      </div>
+    `;
+    this.#main.appendChild(modal);
+
+    document.getElementById("confirm-delete").addEventListener("click", () => {
+      this.#app.removeTodo(projectName, todoIndex)
       modal.remove();
       this.#displayProjects(this.#app.getProjects());
       this.#displayTodos(this.#app.getAllTodos());

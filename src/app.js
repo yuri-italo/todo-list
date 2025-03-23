@@ -58,6 +58,32 @@ export default class App {
     this.#storage.saveMany(projects);
   }
 
+  removeTodo(projectName, todoIndex) {
+    if (typeof projectName !== "string") {
+      throw new Error("Invalid project name");
+    }
+
+    const projects = this.#storage.load();
+
+    const project = projects.find(
+      (project) => project.name.toLowerCase() === projectName.toLowerCase()
+    );
+
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    if (todoIndex >= 0 && todoIndex < project.todoList.length) {
+      project.remove(Number.parseInt(todoIndex));
+    } else {
+      throw new Error("Invalid todo index");
+    }
+    
+    console.log(projects);
+    
+    this.#storage.saveMany(projects);
+  }
+
   isTheDefaultProject(name) {
     if (typeof name !== "string") {
       throw new Error("Invalid project name");
@@ -96,7 +122,13 @@ export default class App {
   }
 
   #getTodos() {
-    return this.#storage.load().flatMap((project) => project.todoList);
+    return this.#storage.load().flatMap((project) => {
+      return project.todoList.map((todo, index) => ({
+        ...todo.toJSON(),
+        index: index,
+        project: project.name
+      }));
+    });
   }
 
   #isProjectNameUnique(name) {
