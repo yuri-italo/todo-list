@@ -42,9 +42,11 @@ export default class Ui {
 
   #displayProjectTodos(projectIndex) {
     this.#clearMain();
-    console.log(projectIndex);
     
     const project = this.#app.getProjects()[projectIndex];
+    const title = document.createElement("h1");
+    title.innerText = project.name;
+
     const todos = project.todoList;
 
     const btnAddTodo = document.createElement("button");
@@ -65,6 +67,7 @@ export default class Ui {
 
     this.#main.appendChild(btnAddTodo);
     this.#main.appendChild(btnRemoveProject);
+    this.#main.appendChild(title);
 
     todos.forEach((todo, todoIndex) => {
       this.#main.appendChild(
