@@ -1,4 +1,4 @@
-import Todo from "./todo.js";
+import Todo from "../models/todo.js";
 
 export default class Project {
   #name;

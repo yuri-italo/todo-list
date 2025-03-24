@@ -1,6 +1,6 @@
-import App from "./app.js";
-import Todo from "./todo.js";
-import Project from "./project.js";
+import App from "../app/app.js";
+import Todo from "../models/todo.js";
+import Project from "../models/project.js";
 import { format } from "date-fns";
 
 export default class Ui {

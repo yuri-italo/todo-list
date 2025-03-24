@@ -1,5 +1,5 @@
-import Project from "./project.js";
-import projectStorage from "./storage.js";
+import Project from "../models/project.js";
+import projectStorage from "../services/storage.js";
 import { compareAsc, isToday, isThisWeek, isThisMonth } from "date-fns";
 
 export default class App {

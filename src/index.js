@@ -1,6 +1,6 @@
 import "./style/reset.css";
 import "./style/styles.css";
 
-import Ui from "./ui.js";
+import Ui from "./js/app/ui.js";
 
 new Ui();

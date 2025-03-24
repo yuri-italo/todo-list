@@ -1,5 +1,5 @@
-import Project from "./project.js";
-import Todo from "./todo.js";
+import Project from "../models/project.js";
+import Todo from "../models/todo.js";
 
 export default (function () {
   const STORAGE_KEY = "projects";
