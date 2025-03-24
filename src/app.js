@@ -58,6 +58,43 @@ export default class App {
     this.#storage.saveMany(projects);
   }
 
+  updateTodo(projectName, todoIndex, updatedTodo) {
+    todoIndex = parseInt(todoIndex);
+
+    if (typeof projectName !== "string" || projectName.trim() === "") {
+      throw new Error("Invalid project name: must be a non-empty string");
+    }
+
+    if (
+      typeof todoIndex !== "number" ||
+      !Number.isInteger(todoIndex) ||
+      todoIndex < 0
+    ) {
+      throw new Error("Invalid todo index: must be a positive integer");
+    }
+
+    if (!updatedTodo || typeof updatedTodo !== "object") {
+      throw new Error("Invalid todo: must be a valid todo object");
+    }
+    const projects = this.#storage.load();
+
+    const projectIndex = projects.findIndex(
+      (p) => p.name.toLowerCase() === projectName.toLowerCase()
+    );
+
+    if (projectIndex === -1) {
+      throw new Error(`Project "${projectName}" not found`);
+    }
+    const project = projects[projectIndex];
+
+    if (todoIndex >= project.todoList.length) {
+      throw new Error(`Invalid todo index: ${todoIndex} (out of bounds)`);
+    }
+    project.update(updatedTodo, todoIndex);
+
+    this.#storage.saveMany(projects);
+  }
+
   removeTodo(projectName, todoIndex) {
     if (typeof projectName !== "string") {
       throw new Error("Invalid project name");
@@ -78,9 +115,7 @@ export default class App {
     } else {
       throw new Error("Invalid todo index");
     }
-    
-    console.log(projects);
-    
+
     this.#storage.saveMany(projects);
   }
 
@@ -90,6 +125,16 @@ export default class App {
     }
 
     return name.toLocaleLowerCase() === "default" ? true : false;
+  }
+
+  getProjectIndex(projectName) {
+    const projects = this.#storage.load();
+    for (let i = 0; i < projects.length; i++) {
+      if (projects[i].name === projectName) {
+        return i;
+      }
+    }
+    return -1;
   }
 
   getProjects() {
@@ -126,7 +171,7 @@ export default class App {
       return project.todoList.map((todo, index) => ({
         ...todo.toJSON(),
         index: index,
-        project: project.name
+        project: project.name,
       }));
     });
   }

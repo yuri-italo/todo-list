@@ -42,7 +42,8 @@ export default class Ui {
 
   #displayProjectTodos(projectIndex) {
     this.#clearMain();
-
+    console.log(projectIndex);
+    
     const project = this.#app.getProjects()[projectIndex];
     const todos = project.todoList;
 
@@ -65,8 +66,10 @@ export default class Ui {
     this.#main.appendChild(btnAddTodo);
     this.#main.appendChild(btnRemoveProject);
 
-    todos.forEach((todo, index) => {
-      this.#main.appendChild(this.#createTodoCard(todo, index, project.name));
+    todos.forEach((todo, todoIndex) => {
+      this.#main.appendChild(
+        this.#createTodoCard(todo, todoIndex, project.name)
+      );
     });
   }
 
@@ -139,14 +142,32 @@ export default class Ui {
     this.#createDeleteTodoForm(projectName, todoIndex);
   }
 
+  #handleEditTodo(event) {
+    const card = event.target.closest(".todo-card");
+    const projectName = card.dataset.project;
+    const todoIndex = card.dataset.index;
+
+    this.#createEditTodoForm(projectName, todoIndex);
+  }
+
   #clearMain() {
     this.#main.innerHTML = "";
   }
 
-  #createTodoCard(todo, index, project) {
+  #createTodoCard(todo, todoIndex, projectName) {
     const card = document.createElement("div");
-    card.dataset.index = index ? index : todo.index;
-    card.dataset.project = project ? project : todo.project;
+
+    const index =
+      typeof todoIndex !== "undefined" && todoIndex !== null
+        ? todoIndex
+        : todo?.index ?? 0; 
+    const project =
+      typeof projectName !== "undefined" && projectName !== null
+        ? projectName
+        : todo?.project ?? "default";
+
+    card.dataset.index = index;
+    card.dataset.project = project;
     card.classList.add("todo-card");
     card.classList.add(`todo-card-${todo.priority.toLowerCase()}`);
 
@@ -168,11 +189,21 @@ export default class Ui {
     const status = document.createElement("p");
     status.textContent = `Status: ${todo.checklist}`;
 
+    const buttonContainer = document.createElement("div");
+    buttonContainer.classList.add("todo-buttons");
+
+    const editButton = document.createElement("button");
+    editButton.textContent = "✏️";
+    editButton.classList.add("edit-button");
+    editButton.addEventListener("click", this.#handleEditTodo.bind(this));
+
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "🗑️";
     deleteButton.classList.add("delete-button");
-
     deleteButton.addEventListener("click", this.#handleDeleteTodo.bind(this));
+
+    buttonContainer.appendChild(editButton);
+    buttonContainer.appendChild(deleteButton);
 
     card.appendChild(title);
     card.appendChild(description);
@@ -180,7 +211,7 @@ export default class Ui {
     card.appendChild(priority);
     card.appendChild(notes);
     card.appendChild(status);
-    card.appendChild(deleteButton);
+    card.appendChild(buttonContainer);
 
     return card;
   }
@@ -341,6 +372,111 @@ export default class Ui {
     });
   }
 
+  #createEditTodoForm(projectName, todoIndex) {
+    const todo = this.#app.getProjects().find((p) => p.name === projectName)
+      .todoList[todoIndex];
+
+    const modal = document.createElement("div");
+    modal.classList.add("modal");
+
+    modal.innerHTML = `
+    <div class="modal-content">
+      <h2>Edit Todo</h2>
+      <form id="edit-todo-form">
+        <div class="form-group">
+          <label for="edit-todo-title">Title</label>
+          <input type="text" id="edit-todo-title" placeholder="Title" value="${
+            todo.title
+          }" required />
+        </div>
+        <div class="form-group">
+          <label for="edit-todo-description">Description</label>
+          <textarea id="edit-todo-description" placeholder="Description">${
+            todo.description
+          }</textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-todo-due-date">Due Date</label>
+          <input type="date" id="edit-todo-due-date" value="${format(
+            todo.dueDate,
+            "yyyy-MM-dd"
+          )}" required />
+        </div>
+        <div class="form-group">
+          <label for="edit-todo-priority">Priority</label>
+          <select id="edit-todo-priority" required>
+            <option value="High" ${
+              todo.priority === "High" ? "selected" : ""
+            }>High</option>
+            <option value="Medium" ${
+              todo.priority === "Medium" ? "selected" : ""
+            }>Medium</option>
+            <option value="Low" ${
+              todo.priority === "Low" ? "selected" : ""
+            }>Low</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="edit-todo-notes">Notes</label>
+          <textarea id="edit-todo-notes" placeholder="Notes">${
+            todo.notes
+          }</textarea>
+        </div>
+        <div class="form-group">
+          <label for="edit-todo-checklist">Status</label>
+          <select id="edit-todo-checklist" required>
+            <option value="Not Started" ${
+              todo.checklist === "Not Started" ? "selected" : ""
+            }>Not Started</option>
+            <option value="In Progress" ${
+              todo.checklist === "In Progress" ? "selected" : ""
+            }>In Progress</option>
+            <option value="Completed" ${
+              todo.checklist === "Completed" ? "selected" : ""
+            }>Completed</option>
+          </select>
+        </div>
+        <div class="modal-buttons">
+          <button type="submit" id="save-edit-todo">Save</button>
+          <button type="button" id="cancel-edit-todo">Cancel</button>
+        </div>
+      </form>
+    </div>
+  `;
+
+    this.#main.appendChild(modal);
+
+    const form = document.getElementById("edit-todo-form");
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const updatedTodo = new Todo(
+        document.getElementById("edit-todo-title").value.trim(),
+        document.getElementById("edit-todo-description").value.trim(),
+        document.getElementById("edit-todo-due-date").value.trim(),
+        document.getElementById("edit-todo-priority").value,
+        document.getElementById("edit-todo-notes").value.trim(),
+        document.getElementById("edit-todo-checklist").value
+      );
+
+      this.#app.updateTodo(projectName, todoIndex, updatedTodo);
+      modal.remove();
+      this.#displayProjectTodos(this.#app.getProjectIndex(projectName));
+    });
+
+    document
+      .getElementById("cancel-edit-todo")
+      .addEventListener("click", () => {
+        modal.remove();
+      });
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) {
+        modal.remove();
+      }
+    });
+  }
+
   #createDeleteProjectForm(projectName) {
     const modal = document.createElement("div");
     modal.classList.add("modal");
@@ -382,7 +518,7 @@ export default class Ui {
     this.#main.appendChild(modal);
 
     document.getElementById("confirm-delete").addEventListener("click", () => {
-      this.#app.removeTodo(projectName, todoIndex)
+      this.#app.removeTodo(projectName, todoIndex);
       modal.remove();
       this.#displayProjects(this.#app.getProjects());
       this.#displayTodos(this.#app.getAllTodos());

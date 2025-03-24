@@ -33,6 +33,14 @@ export default class Project {
     }
   }
 
+  update(updatedTodo, todoIndex) {
+    if (typeof todoIndex !== "number" || todoIndex < 0) {
+      throw new Error("Invalid todo index");
+    }
+
+    this.#todoList[todoIndex] = updatedTodo;
+  }
+
   remove(todoIndex) {
     if (typeof todoIndex !== "number" || todoIndex < 0) {
       throw new Error("Invalid todo index");

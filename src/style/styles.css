@@ -144,31 +144,40 @@ button:hover {
   color: var(--color-900);
 }
 
-.delete-button {
+.todo-buttons {
+  display: flex;
+  gap: var(--gutter-xxs);
+  margin-top: var(--gutter-sm);
+}
+
+.delete-button,
+.edit-button {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: var(--size-lg); /* Use a larger size for the emoji */
-  color: var(--color-600); /* Use the primary color */
-  padding: var(--gutter-xxs); /* Add some padding */
-  margin-top: var(--gutter-xxs); /* Add margin to separate from other content */
-  transition: all 0.2s; /* Smooth transition for hover effects */
-  border-radius: 4px; /* Match the border radius of other buttons */
+  font-size: var(--size-lg); 
+  color: var(--color-600);
+  padding: var(--gutter-xxs); 
+  margin-top: var(--gutter-xxs); 
+  transition: all 0.2s;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px; /* Fixed width for consistency */
-  height: 32px; /* Fixed height for consistency */
+  width: 32px;
+  height: 32px;
 }
 
-.delete-button:hover {
-  color: var(--color-900); /* Darker color on hover */
-  background-color: var(--color-100); /* Light background on hover */
-  transform: scale(1.1); /* Slightly enlarge on hover */
+.delete-button:hover,
+.edit-button:hover {
+  color: var(--color-900); 
+  background-color: var(--color-100);
+  transform: scale(1.1);
 }
 
-.delete-button:active {
-  transform: scale(0.95); /* Slightly shrink when clicked */
+.delete-button:active,
+.edit-button:active {
+  transform: scale(0.95);
 }
 
 .add-project {
