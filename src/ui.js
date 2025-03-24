@@ -135,7 +135,7 @@ export default class Ui {
   }
 
   #handleDeleteTodo(event) {
-    const card = event.target.closest("div");
+    const card = event.target.closest(".todo-card");
     const projectName = card.dataset.project;
     const todoIndex = card.dataset.index;
 
